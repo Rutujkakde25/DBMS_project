@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Manage Alumni{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <h3 class="sidebar-title">Admin Panel</h3>
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('admin.dashboard') }}">📊 Dashboard</a></li>
+            <li><a href="{{ url_for('admin.manage_alumni') }}" class="active">🎓 Manage Alumni</a></li>
+            <li><a href="{{ url_for('admin.manage_students') }}">👨‍🎓 Manage Students</a></li>
+            <li><a href="{{ url_for('admin.manage_departments') }}">🏛️ Departments</a></li>
+            <li><a href="{{ url_for('admin.manage_events') }}">📅 Events</a></li>
+            <li><a href="{{ url_for('admin.reports') }}">📈 Reports</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="logout-link">🚪 Logout</a></li>
+        </ul>
+    </aside>
+    <div class="dashboard-main">
+        <div class="dashboard-header">
+            <h1>🎓 Manage Alumni</h1>
+            <p class="text-muted">View, approve, reject, or delete alumni records.</p>
+        </div>
+
+        {% if alumni %}
+        <div class="section-card">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th><th>Email</th><th>Department</th><th>Year</th>
+                        <th>Company</th><th>Status</th><th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in alumni %}
+                    <tr>
+                        <td><strong>{{ a.full_name }}</strong></td>
+                        <td>{{ a.email }}</td>
+                        <td>{{ a.department_name }}</td>
+                        <td>{{ a.graduation_year }}</td>
+                        <td>{{ a.current_company or '—' }}</td>
+                        <td>
+                            <span class="badge badge-{{ 'success' if a.account_status=='approved' else ('warning' if a.account_status=='pending' else 'danger') }}">
+                                {{ a.account_status | capitalize }}
+                            </span>
+                        </td>
+                        <td class="action-btns">
+                            {% if a.account_status == 'pending' %}
+                            <form method="POST" action="{{ url_for('admin.approve_alumni', user_id=a.user_id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-success">✓ Approve</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('admin.reject_alumni', user_id=a.user_id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-warning">✗ Reject</button>
+                            </form>
+                            {% elif a.account_status == 'rejected' %}
+                            <form method="POST" action="{{ url_for('admin.approve_alumni', user_id=a.user_id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-success">Re-Approve</button>
+                            </form>
+                            {% endif %}
+                            <form method="POST" action="{{ url_for('admin.delete_alumni', user_id=a.user_id) }}" style="display:inline;"
+                                  onsubmit="return confirm('Delete {{ a.full_name }}? This cannot be undone.');">
+                                <button type="submit" class="btn btn-sm btn-danger">🗑 Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">🎓</div>
+            <h3>No alumni records found.</h3>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

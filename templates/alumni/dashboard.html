@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Alumni Dashboard{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <h3 class="sidebar-title">Alumni Menu</h3>
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('alumni.dashboard') }}" class="active">📊 Dashboard</a></li>
+            <li><a href="{{ url_for('alumni.edit_profile') }}">👤 Edit Profile</a></li>
+            <li><a href="{{ url_for('alumni.my_jobs') }}">💼 My Jobs</a></li>
+            <li><a href="{{ url_for('alumni.add_job') }}">➕ Post a Job</a></li>
+            <li><a href="{{ url_for('alumni.mentorship_requests') }}">🤝 Mentorship Requests</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="logout-link">🚪 Logout</a></li>
+        </ul>
+    </aside>
+    <div class="dashboard-main">
+        <div class="dashboard-header">
+            <h1>Welcome, {{ session.get('full_name') }} 👋</h1>
+            <p class="text-muted">Manage your profile, job postings, and mentorship requests.</p>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="stat-cards-grid">
+            <div class="stat-card-dash blue">
+                <div class="stat-icon">💼</div>
+                <div class="stat-info">
+                    <div class="stat-number">{{ job_count }}</div>
+                    <div class="stat-label">Jobs Posted</div>
+                </div>
+            </div>
+            <div class="stat-card-dash orange">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-info">
+                    <div class="stat-number">{{ pending_mentorship }}</div>
+                    <div class="stat-label">Pending Requests</div>
+                </div>
+            </div>
+            <div class="stat-card-dash green">
+                <div class="stat-icon">🤝</div>
+                <div class="stat-info">
+                    <div class="stat-number">{{ total_mentorship }}</div>
+                    <div class="stat-label">Total Mentorship</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Info -->
+        <div class="section-card">
+            <h2>Your Profile</h2>
+            {% if profile.current_company %}
+            <p>🏢 <strong>{{ profile.current_company }}</strong> — {{ profile.job_title }}</p>
+            {% else %}
+            <p class="text-muted">Profile incomplete. <a href="{{ url_for('alumni.edit_profile') }}">Update your profile →</a></p>
+            {% endif %}
+            {% if profile.skills %}
+            <p>🔧 Skills: {{ profile.skills }}</p>
+            {% endif %}
+            <a href="{{ url_for('alumni.edit_profile') }}" class="btn btn-sm btn-outline" style="margin-top:0.5rem;">Edit Profile</a>
+        </div>
+
+        <!-- Recent Jobs -->
+        <div class="section-card">
+            <h2>Recent Job Postings</h2>
+            {% if recent_jobs %}
+            <table class="data-table">
+                <thead><tr><th>Title</th><th>Company</th><th>Type</th><th>Deadline</th></tr></thead>
+                <tbody>
+                    {% for j in recent_jobs %}
+                    <tr>
+                        <td>{{ j.job_title }}</td>
+                        <td>{{ j.company_name }}</td>
+                        <td><span class="badge badge-info">{{ j.job_type }}</span></td>
+                        <td>{{ j.deadline or '—' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a href="{{ url_for('alumni.my_jobs') }}" class="btn btn-sm btn-outline" style="margin-top:1rem;">View All Jobs →</a>
+            {% else %}
+            <div class="empty-state">
+                <p>You haven't posted any jobs yet.</p>
+                <a href="{{ url_for('alumni.add_job') }}" class="btn btn-sm">Post a Job</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Recent Mentorship Requests -->
+        <div class="section-card">
+            <h2>Recent Mentorship Requests</h2>
+            {% if recent_req %}
+            <table class="data-table">
+                <thead><tr><th>Student</th><th>Department</th><th>Year</th><th>Status</th></tr></thead>
+                <tbody>
+                    {% for r in recent_req %}
+                    <tr>
+                        <td>{{ r.student_name }}</td>
+                        <td>{{ r.department_name }}</td>
+                        <td>Year {{ r.current_year }}</td>
+                        <td><span class="badge badge-{{ 'success' if r.request_status=='Accepted' else ('danger' if r.request_status=='Rejected' else 'warning') }}">{{ r.request_status }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a href="{{ url_for('alumni.mentorship_requests') }}" class="btn btn-sm btn-outline" style="margin-top:1rem;">View All Requests →</a>
+            {% else %}
+            <p class="text-muted">No mentorship requests yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

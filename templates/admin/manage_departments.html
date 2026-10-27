@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Manage Departments{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <h3 class="sidebar-title">Admin Panel</h3>
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('admin.dashboard') }}">📊 Dashboard</a></li>
+            <li><a href="{{ url_for('admin.manage_alumni') }}">🎓 Manage Alumni</a></li>
+            <li><a href="{{ url_for('admin.manage_students') }}">👨‍🎓 Manage Students</a></li>
+            <li><a href="{{ url_for('admin.manage_departments') }}" class="active">🏛️ Departments</a></li>
+            <li><a href="{{ url_for('admin.manage_events') }}">📅 Events</a></li>
+            <li><a href="{{ url_for('admin.reports') }}">📈 Reports</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="logout-link">🚪 Logout</a></li>
+        </ul>
+    </aside>
+    <div class="dashboard-main">
+        <div class="dashboard-header">
+            <h1>🏛️ Manage Departments</h1>
+        </div>
+
+        <!-- Add Department -->
+        <div class="section-card">
+            <h2>Add New Department</h2>
+            <form method="POST" action="{{ url_for('admin.add_department') }}" class="inline-form">
+                <div class="form-group" style="flex:1;">
+                    <input type="text" name="department_name" placeholder="Department name" required maxlength="100">
+                </div>
+                <button type="submit" class="btn">Add Department</button>
+            </form>
+        </div>
+
+        <!-- List -->
+        <div class="section-card">
+            <h2>All Departments</h2>
+            {% if departments %}
+            <table class="data-table">
+                <thead>
+                    <tr><th>ID</th><th>Department Name</th><th>Alumni</th><th>Students</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    {% for d in departments %}
+                    <tr>
+                        <td>{{ d.department_id }}</td>
+                        <td><strong>{{ d.department_name }}</strong></td>
+                        <td>{{ d.alumni_count }}</td>
+                        <td>{{ d.student_count }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('admin.delete_department', dept_id=d.department_id) }}"
+                                  onsubmit="return confirm('Delete department {{ d.department_name }}?');">
+                                <button type="submit" class="btn btn-sm btn-danger"
+                                    {% if d.alumni_count > 0 or d.student_count > 0 %}disabled title="Cannot delete: has members"{% endif %}>
+                                    🗑 Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state"><p>No departments found.</p></div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

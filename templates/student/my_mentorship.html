@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}My Mentorship Requests{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <h3 class="sidebar-title">Student Menu</h3>
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('student.dashboard') }}">📊 Dashboard</a></li>
+            <li><a href="{{ url_for('student.edit_profile') }}">👤 My Profile</a></li>
+            <li><a href="{{ url_for('student.search_alumni') }}">🔍 Search Alumni</a></li>
+            <li><a href="{{ url_for('student.browse_jobs') }}">💼 Browse Jobs</a></li>
+            <li><a href="{{ url_for('student.my_mentorship') }}" class="active">🤝 My Requests</a></li>
+            <li><a href="{{ url_for('student.browse_events') }}">📅 Events</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="logout-link">🚪 Logout</a></li>
+        </ul>
+    </aside>
+    <div class="dashboard-main">
+        <div class="dashboard-header">
+            <h1>🤝 My Mentorship Requests</h1>
+        </div>
+
+        {% if requests %}
+        <div class="section-card">
+            {% for r in requests %}
+            <div class="request-card">
+                <div class="request-header">
+                    <div>
+                        <h3>{{ r.alumni_name }}</h3>
+                        <p class="text-muted">{{ r.job_title or 'Alumni' }} {% if r.current_company %}@ {{ r.current_company }}{% endif %}</p>
+                        <p class="text-muted">{{ r.department_name }}</p>
+                    </div>
+                    <span class="badge badge-{{ 'success' if r.request_status=='Accepted' else ('danger' if r.request_status=='Rejected' else 'warning') }} badge-lg">
+                        {{ r.request_status }}
+                    </span>
+                </div>
+                <div class="request-message">
+                    <p><strong>Your message:</strong> <em>"{{ r.message }}"</em></p>
+                    <small class="text-muted">Sent on {{ r.requested_at.strftime('%d %b %Y') }}</small>
+                </div>
+                {% if r.request_status == 'Accepted' %}
+                <div class="alert alert-success" style="margin-top:0.5rem;">
+                    ✅ {{ r.alumni_name }} has accepted your request! Reach out at <a href="mailto:{{ r.alumni_email }}">{{ r.alumni_email }}</a>.
+                </div>
+                {% elif r.request_status == 'Rejected' %}
+                <div class="alert alert-danger" style="margin-top:0.5rem;">
+                    ❌ Your request was not accepted this time. Try connecting with other alumni.
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">🤝</div>
+            <h3>You haven't sent any mentorship requests yet.</h3>
+            <a href="{{ url_for('student.search_alumni') }}" class="btn">Find Alumni to Connect</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

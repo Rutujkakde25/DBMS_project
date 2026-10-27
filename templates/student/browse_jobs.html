@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Browse Jobs{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <h3 class="sidebar-title">Student Menu</h3>
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('student.dashboard') }}">📊 Dashboard</a></li>
+            <li><a href="{{ url_for('student.edit_profile') }}">👤 My Profile</a></li>
+            <li><a href="{{ url_for('student.search_alumni') }}">🔍 Search Alumni</a></li>
+            <li><a href="{{ url_for('student.browse_jobs') }}" class="active">💼 Browse Jobs</a></li>
+            <li><a href="{{ url_for('student.my_mentorship') }}">🤝 My Requests</a></li>
+            <li><a href="{{ url_for('student.browse_events') }}">📅 Events</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="logout-link">🚪 Logout</a></li>
+        </ul>
+    </aside>
+    <div class="dashboard-main">
+        <div class="dashboard-header"><h1>💼 Job Opportunities</h1></div>
+
+        <!-- Filter -->
+        <div class="section-card">
+            <form method="GET" action="{{ url_for('student.browse_jobs') }}" style="display:flex; gap:1rem; align-items:flex-end;">
+                <div class="form-group" style="flex:1;">
+                    <label>Filter by Type</label>
+                    <select name="job_type">
+                        <option value="">All Types</option>
+                        <option value="Internship" {% if job_type=='Internship' %}selected{% endif %}>Internship</option>
+                        <option value="Full-time" {% if job_type=='Full-time' %}selected{% endif %}>Full-time</option>
+                    </select>
+                </div>
+                <div style="display:flex; gap:0.5rem;">
+                    <button type="submit" class="btn">Filter</button>
+                    <a href="{{ url_for('student.browse_jobs') }}" class="btn btn-outline">Clear</a>
+                </div>
+            </form>
+        </div>
+
+        {% if jobs %}
+        <div class="jobs-list">
+            {% for j in jobs %}
+            <div class="job-card">
+                <div class="job-header">
+                    <div>
+                        <span class="badge badge-{{ 'info' if j.job_type=='Internship' else 'success' }}">{{ j.job_type }}</span>
+                        <h3>{{ j.job_title }}</h3>
+                        <p class="job-company">🏢 {{ j.company_name }} {% if j.location %}| 📍 {{ j.location }}{% endif %}</p>
+                        <p class="text-muted">Posted by: {{ j.posted_by }} ({{ j.alumni_department }})</p>
+                    </div>
+                    <div class="job-deadline">
+                        {% if j.deadline %}⏰ Deadline: <strong>{{ j.deadline }}</strong>{% endif %}
+                    </div>
+                </div>
+                <p class="job-desc">{{ j.job_description[:200] }}{% if j.job_description|length > 200 %}...{% endif %}</p>
+                {% if j.application_link %}
+                <a href="{{ j.application_link }}" target="_blank" class="btn btn-sm">Apply Now →</a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">💼</div>
+            <h3>No job opportunities available right now.</h3>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

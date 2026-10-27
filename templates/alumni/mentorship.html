@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Mentorship Requests{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <h3 class="sidebar-title">Alumni Menu</h3>
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('alumni.dashboard') }}">📊 Dashboard</a></li>
+            <li><a href="{{ url_for('alumni.edit_profile') }}">👤 Edit Profile</a></li>
+            <li><a href="{{ url_for('alumni.my_jobs') }}">💼 My Jobs</a></li>
+            <li><a href="{{ url_for('alumni.add_job') }}">➕ Post a Job</a></li>
+            <li><a href="{{ url_for('alumni.mentorship_requests') }}" class="active">🤝 Mentorship Requests</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="logout-link">🚪 Logout</a></li>
+        </ul>
+    </aside>
+    <div class="dashboard-main">
+        <div class="dashboard-header">
+            <h1>🤝 Mentorship Requests</h1>
+        </div>
+
+        {% if requests %}
+        <div class="section-card">
+            {% for r in requests %}
+            <div class="request-card">
+                <div class="request-header">
+                    <div>
+                        <h3>{{ r.student_name }}</h3>
+                        <p class="text-muted">{{ r.department_name }} | Year {{ r.current_year }} | {{ r.student_email }}</p>
+                        {% if r.student_skills %}<p>🔧 {{ r.student_skills }}</p>{% endif %}
+                    </div>
+                    <span class="badge badge-{{ 'success' if r.request_status=='Accepted' else ('danger' if r.request_status=='Rejected' else 'warning') }} badge-lg">
+                        {{ r.request_status }}
+                    </span>
+                </div>
+                <div class="request-message">
+                    <p><em>"{{ r.message }}"</em></p>
+                    <small class="text-muted">Requested on {{ r.requested_at.strftime('%d %b %Y at %H:%M') }}</small>
+                </div>
+                {% if r.request_status == 'Pending' %}
+                <div class="request-actions">
+                    <form method="POST" action="{{ url_for('alumni.update_mentorship', mentorship_id=r.mentorship_id) }}" style="display:inline;">
+                        <input type="hidden" name="status" value="Accepted">
+                        <button type="submit" class="btn btn-sm btn-success">✓ Accept</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('alumni.update_mentorship', mentorship_id=r.mentorship_id) }}" style="display:inline;">
+                        <input type="hidden" name="status" value="Rejected">
+                        <button type="submit" class="btn btn-sm btn-danger">✗ Reject</button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">🤝</div>
+            <h3>No mentorship requests yet.</h3>
+            <p>Students will appear here when they send you requests.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

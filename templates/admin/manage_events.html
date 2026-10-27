@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Manage Events{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <h3 class="sidebar-title">Admin Panel</h3>
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('admin.dashboard') }}">📊 Dashboard</a></li>
+            <li><a href="{{ url_for('admin.manage_alumni') }}">🎓 Manage Alumni</a></li>
+            <li><a href="{{ url_for('admin.manage_students') }}">👨‍🎓 Manage Students</a></li>
+            <li><a href="{{ url_for('admin.manage_departments') }}">🏛️ Departments</a></li>
+            <li><a href="{{ url_for('admin.manage_events') }}" class="active">📅 Events</a></li>
+            <li><a href="{{ url_for('admin.reports') }}">📈 Reports</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="logout-link">🚪 Logout</a></li>
+        </ul>
+    </aside>
+    <div class="dashboard-main">
+        <div class="dashboard-header">
+            <h1>📅 Manage Events</h1>
+        </div>
+
+        <!-- Add Event -->
+        <div class="section-card">
+            <h2>Create New Event</h2>
+            <form method="POST" action="{{ url_for('admin.add_event') }}">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Event Name *</label>
+                        <input type="text" name="event_name" required placeholder="e.g. Annual Alumni Meet 2027">
+                    </div>
+                    <div class="form-group">
+                        <label>Event Date *</label>
+                        <input type="date" name="event_date" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Venue</label>
+                        <input type="text" name="venue" placeholder="e.g. Main Auditorium">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" rows="3" placeholder="Event details..."></textarea>
+                </div>
+                <button type="submit" class="btn">📅 Create Event</button>
+            </form>
+        </div>
+
+        <!-- Events List -->
+        <div class="section-card">
+            <h2>All Events</h2>
+            {% if events %}
+            <table class="data-table">
+                <thead>
+                    <tr><th>Event Name</th><th>Date</th><th>Venue</th><th>Registrations</th><th>Created By</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    {% for e in events %}
+                    <tr>
+                        <td><strong>{{ e.event_name }}</strong></td>
+                        <td>{{ e.event_date }}</td>
+                        <td>{{ e.venue or '—' }}</td>
+                        <td>{{ e.reg_count }}</td>
+                        <td>{{ e.created_by_name }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('admin.delete_event', event_id=e.event_id) }}"
+                                  onsubmit="return confirm('Delete event {{ e.event_name }}?');">
+                                <button type="submit" class="btn btn-sm btn-danger">🗑 Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state"><p>No events yet.</p></div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

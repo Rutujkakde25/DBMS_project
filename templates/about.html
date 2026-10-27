@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}About{% endblock %}
+{% block content %}
+<div class="container page-container">
+    <h1 class="page-title">About AlumniConnect</h1>
+    <div class="about-content">
+        <section class="about-section">
+            <h2>Project Overview</h2>
+            <p>AlumniConnect is a full-stack University Alumni Networking Management System built as a DBMS college project.
+            It demonstrates relational database design, SQL queries, normalization, and web application development.</p>
+        </section>
+        <section class="about-section">
+            <h2>Technology Stack</h2>
+            <div class="tech-grid">
+                <div class="tech-item"><strong>Frontend</strong><p>HTML, CSS, JavaScript</p></div>
+                <div class="tech-item"><strong>Backend</strong><p>Python Flask</p></div>
+                <div class="tech-item"><strong>Database</strong><p>MySQL 8.0</p></div>
+                <div class="tech-item"><strong>Auth</strong><p>Flask Sessions + Werkzeug</p></div>
+            </div>
+        </section>
+        <section class="about-section">
+            <h2>DBMS Concepts Demonstrated</h2>
+            <ul class="concept-list">
+                <li>✅ Normalized schema (1NF, 2NF, 3NF)</li>
+                <li>✅ Primary keys, foreign keys, UNIQUE constraints</li>
+                <li>✅ INNER JOIN, LEFT JOIN, multiple joins</li>
+                <li>✅ Aggregate functions: COUNT, AVG, MIN, MAX</li>
+                <li>✅ GROUP BY with HAVING clause (subquery)</li>
+                <li>✅ SQL Views for alumni directory and jobs</li>
+                <li>✅ Stored Procedure for filtered alumni search</li>
+                <li>✅ Trigger to validate mentorship requests</li>
+                <li>✅ Indexes on search columns</li>
+                <li>✅ Transactions for multi-table operations</li>
+                <li>✅ Parameterized queries (SQL injection prevention)</li>
+            </ul>
+        </section>
+    </div>
+</div>
+{% endblock %}

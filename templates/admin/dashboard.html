@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h3 class="sidebar-title">Admin Panel</h3>
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('admin.dashboard') }}" class="active">📊 Dashboard</a></li>
+            <li><a href="{{ url_for('admin.manage_alumni') }}">🎓 Manage Alumni</a></li>
+            <li><a href="{{ url_for('admin.manage_students') }}">👨‍🎓 Manage Students</a></li>
+            <li><a href="{{ url_for('admin.manage_departments') }}">🏛️ Departments</a></li>
+            <li><a href="{{ url_for('admin.manage_events') }}">📅 Events</a></li>
+            <li><a href="{{ url_for('admin.reports') }}">📈 Reports</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="logout-link">🚪 Logout</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main -->
+    <div class="dashboard-main">
+        <div class="dashboard-header">
+            <h1>Welcome, {{ session.get('full_name') }} 👋</h1>
+            <p class="text-muted">Here's an overview of the alumni network.</p>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="stat-cards-grid">
+            <div class="stat-card-dash green">
+                <div class="stat-icon">🎓</div>
+                <div class="stat-info">
+                    <div class="stat-number">{{ stats.total_alumni }}</div>
+                    <div class="stat-label">Approved Alumni</div>
+                </div>
+            </div>
+            <div class="stat-card-dash blue">
+                <div class="stat-icon">👨‍🎓</div>
+                <div class="stat-info">
+                    <div class="stat-number">{{ stats.total_students }}</div>
+                    <div class="stat-label">Students</div>
+                </div>
+            </div>
+            <div class="stat-card-dash orange">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-info">
+                    <div class="stat-number">{{ stats.pending_approvals }}</div>
+                    <div class="stat-label">Pending Approvals</div>
+                </div>
+            </div>
+            <div class="stat-card-dash purple">
+                <div class="stat-icon">💼</div>
+                <div class="stat-info">
+                    <div class="stat-number">{{ stats.total_jobs }}</div>
+                    <div class="stat-label">Job Postings</div>
+                </div>
+            </div>
+            <div class="stat-card-dash teal">
+                <div class="stat-icon">📅</div>
+                <div class="stat-info">
+                    <div class="stat-number">{{ stats.total_events }}</div>
+                    <div class="stat-label">Events</div>
+                </div>
+            </div>
+            <div class="stat-card-dash red">
+                <div class="stat-icon">🤝</div>
+                <div class="stat-info">
+                    <div class="stat-number">{{ stats.total_mentorships }}</div>
+                    <div class="stat-label">Mentorship Requests</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Approvals Quick View -->
+        {% if pending %}
+        <div class="section-card">
+            <h2>⏳ Pending Alumni Approvals</h2>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Name</th><th>Email</th><th>Department</th><th>Year</th><th>Registered</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    {% for a in pending %}
+                    <tr>
+                        <td>{{ a.full_name }}</td>
+                        <td>{{ a.email }}</td>
+                        <td>{{ a.department_name }}</td>
+                        <td>{{ a.graduation_year }}</td>
+                        <td>{{ a.created_at.strftime('%d %b %Y') }}</td>
+                        <td class="action-btns">
+                            <form method="POST" action="{{ url_for('admin.approve_alumni', user_id=a.user_id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('admin.reject_alumni', user_id=a.user_id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-danger">Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a href="{{ url_for('admin.manage_alumni') }}" class="btn btn-sm btn-outline" style="margin-top:1rem;">View All Alumni →</a>
+        </div>
+        {% endif %}
+
+        <!-- Department Stats -->
+        <div class="section-card">
+            <h2>🏛️ Alumni per Department</h2>
+            <div class="bar-chart">
+                {% for d in dept_stats %}
+                <div class="bar-row">
+                    <span class="bar-label">{{ d.department_name }}</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width:{{ [d.alumni_count * 40, 100] | min }}%;"></div>
+                    </div>
+                    <span class="bar-value">{{ d.alumni_count }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

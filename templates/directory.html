@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Alumni Directory{% endblock %}
+{% block content %}
+<div class="container page-container">
+    <h1 class="page-title">Alumni Directory</h1>
+    <p class="page-subtitle">Explore our network of accomplished graduates</p>
+
+    {% if alumni %}
+    <div class="alumni-grid">
+        {% for a in alumni %}
+        <div class="alumni-card">
+            <div class="alumni-avatar">{{ a.full_name[0] }}</div>
+            <h3>{{ a.full_name }}</h3>
+            <p class="alumni-title">{{ a.job_title or 'Alumni' }}</p>
+            <p class="alumni-company">{% if a.current_company %}🏢 {{ a.current_company }}{% endif %}</p>
+            <div class="alumni-tags">
+                <span class="tag">{{ a.department_name }}</span>
+                <span class="tag">Class of {{ a.graduation_year }}</span>
+            </div>
+            {% if a.linkedin_url %}
+            <a href="{{ a.linkedin_url }}" target="_blank" class="btn btn-sm btn-outline" style="margin-top:0.5rem;">LinkedIn</a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">🎓</div>
+        <h3>No alumni records yet</h3>
+        <p>Alumni will appear here once they register and get approved.</p>
+    </div>
+    {% endif %}
+
+    <div style="text-align:center; margin-top:2rem;">
+        <a href="{{ url_for('auth.register') }}" class="btn">Join as Alumni</a>
+    </div>
+</div>
+{% endblock %}

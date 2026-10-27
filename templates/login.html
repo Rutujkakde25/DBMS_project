@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h2>🎓 Quick Demo Access</h2>
+            <p>Click any button below to instantly enter without typing passwords:</p>
+        </div>
+
+        <!-- 1-CLICK INSTANT DEMO BUTTONS -->
+        <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
+            <a href="{{ url_for('auth.demo_login', role='admin') }}" class="btn btn-full" style="background:#9333ea; border-color:#9333ea;">
+                👑 Enter as Admin (Full Control)
+            </a>
+            <a href="{{ url_for('auth.demo_login', role='alumni') }}" class="btn btn-full" style="background:#059669; border-color:#059669;">
+                🎓 Enter as Alumni (Alice Johnson - Google)
+            </a>
+            <a href="{{ url_for('auth.demo_login', role='student') }}" class="btn btn-full" style="background:#2563eb; border-color:#2563eb;">
+                👨‍🎓 Enter as Student (Kate Brown - 3rd Year)
+            </a>
+        </div>
+
+        <div style="text-align:center; margin:15px 0; color:#94a3b8; font-size:0.85rem;">
+            ─── OR SIGN IN MANUALLY ───
+        </div>
+
+        <form method="POST" action="{{ url_for('auth.login') }}">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="admin@alumni.example.com" autocomplete="email">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Any password" autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn btn-full btn-outline">Sign In with Credentials</button>
+        </form>
+
+        <div class="auth-footer" style="margin-top:15px;">
+            <p>Want to test registration? <a href="{{ url_for('auth.register') }}">Create a new account</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

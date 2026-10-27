@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Connect. Grow. Inspire.</h1>
+        <p>AlumniConnect bridges the gap between graduates and current students,
+           creating a thriving network for mentorship, career opportunities, and lifelong connections.</p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('auth.register') }}" class="btn btn-lg">Get Started</a>
+            <a href="{{ url_for('directory') }}" class="btn btn-lg btn-outline-white">Browse Alumni</a>
+        </div>
+    </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-section">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.alumni }}</div>
+                <div class="stat-label">Alumni Connected</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.jobs }}</div>
+                <div class="stat-label">Job Opportunities</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.departments }}</div>
+                <div class="stat-label">Departments</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.events }}</div>
+                <div class="stat-label">Upcoming Events</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section">
+    <div class="container">
+        <h2 class="section-title">What You Can Do</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🔍</div>
+                <h3>Search Alumni</h3>
+                <p>Find alumni by department, graduation year, company, or skills. Connect with the right mentor.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💼</div>
+                <h3>Job Opportunities</h3>
+                <p>Browse internships and full-time jobs posted exclusively by your university's alumni network.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🤝</div>
+                <h3>Mentorship</h3>
+                <p>Students can request mentorship from alumni. Alumni can guide the next generation.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📅</div>
+                <h3>Events</h3>
+                <p>Stay updated on alumni meets, webinars, and networking events. Register with one click.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+    <div class="container">
+        <h2 class="section-title">How It Works</h2>
+        <div class="steps-grid">
+            <div class="step"><span class="step-num">1</span><p><strong>Register</strong> as Alumni or Student</p></div>
+            <div class="step"><span class="step-num">2</span><p><strong>Set up</strong> your profile</p></div>
+            <div class="step"><span class="step-num">3</span><p><strong>Connect</strong> with the community</p></div>
+            <div class="step"><span class="step-num">4</span><p><strong>Grow</strong> your career</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+    <div class="container cta-box">
+        <h2>Ready to Connect?</h2>
+        <p>Join thousands of alumni and students building meaningful connections.</p>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-lg">Create Your Account</a>
+    </div>
+</section>
+
+{% endblock %}

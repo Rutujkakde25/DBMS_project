@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Search Alumni{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <h3 class="sidebar-title">Student Menu</h3>
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('student.dashboard') }}">📊 Dashboard</a></li>
+            <li><a href="{{ url_for('student.edit_profile') }}">👤 My Profile</a></li>
+            <li><a href="{{ url_for('student.search_alumni') }}" class="active">🔍 Search Alumni</a></li>
+            <li><a href="{{ url_for('student.browse_jobs') }}">💼 Browse Jobs</a></li>
+            <li><a href="{{ url_for('student.my_mentorship') }}">🤝 My Requests</a></li>
+            <li><a href="{{ url_for('student.browse_events') }}">📅 Events</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="logout-link">🚪 Logout</a></li>
+        </ul>
+    </aside>
+    <div class="dashboard-main">
+        <div class="dashboard-header"><h1>🔍 Search Alumni</h1></div>
+
+        <!-- Search Filters -->
+        <div class="section-card">
+            <form method="GET" action="{{ url_for('student.search_alumni') }}" class="search-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" name="name" value="{{ filters.name }}" placeholder="Search by name">
+                    </div>
+                    <div class="form-group">
+                        <label>Department</label>
+                        <select name="department_id">
+                            <option value="">All Departments</option>
+                            {% for d in departments %}
+                            <option value="{{ d.department_id }}" {% if filters.dept_id == d.department_id|string %}selected{% endif %}>{{ d.department_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Graduation Year</label>
+                        <input type="number" name="graduation_year" value="{{ filters.grad_year }}" min="1990" max="2030" placeholder="e.g. 2020">
+                    </div>
+                    <div class="form-group">
+                        <label>Company</label>
+                        <input type="text" name="company" value="{{ filters.company }}" placeholder="e.g. Google">
+                    </div>
+                    <div class="form-group">
+                        <label>Skills</label>
+                        <input type="text" name="skills" value="{{ filters.skills }}" placeholder="e.g. Python">
+                    </div>
+                </div>
+                <div style="display:flex; gap:0.5rem;">
+                    <button type="submit" class="btn">🔍 Search</button>
+                    <a href="{{ url_for('student.search_alumni') }}" class="btn btn-outline">Clear</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results -->
+        {% if alumni_list %}
+        <div class="alumni-results">
+            {% for a in alumni_list %}
+            <div class="alumni-card-result">
+                <div class="alumni-avatar">{{ a.full_name[0] }}</div>
+                <div class="alumni-info">
+                    <h3>{{ a.full_name }}</h3>
+                    <p>{{ a.job_title or 'Alumni' }} {% if a.current_company %}@ <strong>{{ a.current_company }}</strong>{% endif %}</p>
+                    <p class="text-muted">{{ a.department_name }} | Class of {{ a.graduation_year }}</p>
+                    {% if a.skills %}<p>🔧 {{ a.skills }}</p>{% endif %}
+                    {% if a.bio %}<p class="alumni-bio">{{ a.bio[:120] }}{% if a.bio|length > 120 %}...{% endif %}</p>{% endif %}
+                </div>
+                <div class="alumni-actions">
+                    {% if a.linkedin_url %}
+                    <a href="{{ a.linkedin_url }}" target="_blank" class="btn btn-sm btn-outline">LinkedIn</a>
+                    {% endif %}
+                    {% if a.alumni_id in already_sent %}
+                    <span class="badge badge-success">Request Sent</span>
+                    {% else %}
+                    <!-- Mentorship Request Modal Trigger -->
+                    <button class="btn btn-sm" onclick="openModal('modal-{{ a.alumni_id }}')">🤝 Request Mentorship</button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Mentorship Modal -->
+            {% if a.alumni_id not in already_sent %}
+            <div id="modal-{{ a.alumni_id }}" class="modal" style="display:none;">
+                <div class="modal-content">
+                    <h3>Send Mentorship Request to {{ a.full_name }}</h3>
+                    <form method="POST" action="{{ url_for('student.send_mentorship', alumni_id=a.alumni_id) }}">
+                        <div class="form-group">
+                            <label>Your Message *</label>
+                            <textarea name="message" rows="4" required
+                                placeholder="Introduce yourself and explain why you'd like {{ a.full_name }} as your mentor..."></textarea>
+                        </div>
+                        <div style="display:flex; gap:0.5rem;">
+                            <button type="submit" class="btn">📤 Send Request</button>
+                            <button type="button" class="btn btn-outline" onclick="closeModal('modal-{{ a.alumni_id }}')">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+
+            {% endfor %}
+        </div>
+        {% elif request.args %}
+        <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <h3>No alumni found matching your search.</h3>
+            <p>Try different filters.</p>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">🎓</div>
+            <h3>Search for alumni above.</h3>
+            <p>Use filters to find alumni by name, department, graduation year, company, or skills.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

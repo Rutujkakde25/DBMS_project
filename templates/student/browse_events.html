@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Browse Events{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <h3 class="sidebar-title">Student Menu</h3>
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('student.dashboard') }}">📊 Dashboard</a></li>
+            <li><a href="{{ url_for('student.edit_profile') }}">👤 My Profile</a></li>
+            <li><a href="{{ url_for('student.search_alumni') }}">🔍 Search Alumni</a></li>
+            <li><a href="{{ url_for('student.browse_jobs') }}">💼 Browse Jobs</a></li>
+            <li><a href="{{ url_for('student.my_mentorship') }}">🤝 My Requests</a></li>
+            <li><a href="{{ url_for('student.browse_events') }}" class="active">📅 Events</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="logout-link">🚪 Logout</a></li>
+        </ul>
+    </aside>
+    <div class="dashboard-main">
+        <div class="dashboard-header"><h1>📅 Browse Events</h1></div>
+
+        {% if events %}
+        <div class="events-list">
+            {% for e in events %}
+            <div class="event-card">
+                <div class="event-header">
+                    <div>
+                        <h3>{{ e.event_name }}</h3>
+                        <p class="text-muted">📅 {{ e.event_date }} | 📍 {{ e.venue or 'TBA' }}</p>
+                        <p class="text-muted">Organized by: {{ e.organizer }}</p>
+                    </div>
+                    <div class="event-stats">
+                        <span class="badge badge-info">{{ e.reg_count }} Registered</span>
+                    </div>
+                </div>
+                {% if e.description %}
+                <p class="event-desc">{{ e.description }}</p>
+                {% endif %}
+                <div style="margin-top:1rem;">
+                    {% if e.event_id in registered_ids %}
+                    <span class="badge badge-success badge-lg">✅ You're Registered</span>
+                    {% else %}
+                    <form method="POST" action="{{ url_for('student.register_event', event_id=e.event_id) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-sm">Register Now</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📅</div>
+            <h3>No events scheduled at the moment.</h3>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

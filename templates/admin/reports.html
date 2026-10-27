@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <h3 class="sidebar-title">Admin Panel</h3>
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('admin.dashboard') }}">📊 Dashboard</a></li>
+            <li><a href="{{ url_for('admin.manage_alumni') }}">🎓 Manage Alumni</a></li>
+            <li><a href="{{ url_for('admin.manage_students') }}">👨‍🎓 Manage Students</a></li>
+            <li><a href="{{ url_for('admin.manage_departments') }}">🏛️ Departments</a></li>
+            <li><a href="{{ url_for('admin.manage_events') }}">📅 Events</a></li>
+            <li><a href="{{ url_for('admin.reports') }}" class="active">📈 Reports</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="logout-link">🚪 Logout</a></li>
+        </ul>
+    </aside>
+    <div class="dashboard-main">
+        <div class="dashboard-header">
+            <h1>📈 Reports & Analytics</h1>
+        </div>
+
+        <!-- Alumni by Graduation Year -->
+        <div class="section-card">
+            <h2>Alumni by Graduation Year</h2>
+            {% if by_year %}
+            <table class="data-table">
+                <thead><tr><th>Graduation Year</th><th>Alumni Count</th></tr></thead>
+                <tbody>
+                    {% for r in by_year %}
+                    <tr><td>{{ r.graduation_year }}</td><td>{{ r.cnt }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}<p class="text-muted">No data.</p>{% endif %}
+        </div>
+
+        <!-- Jobs by Company -->
+        <div class="section-card">
+            <h2>Job Postings by Company</h2>
+            {% if by_company %}
+            <table class="data-table">
+                <thead><tr><th>Company</th><th>Job Postings</th></tr></thead>
+                <tbody>
+                    {% for r in by_company %}
+                    <tr><td>{{ r.company_name }}</td><td>{{ r.cnt }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}<p class="text-muted">No data.</p>{% endif %}
+        </div>
+
+        <!-- Departments with above-average alumni (SUBQUERY) -->
+        <div class="section-card">
+            <h2>Departments with Above-Average Alumni Count
+                <small class="text-muted">(HAVING + Subquery)</small>
+            </h2>
+            {% if above_avg %}
+            <table class="data-table">
+                <thead><tr><th>Department</th><th>Alumni Count</th></tr></thead>
+                <tbody>
+                    {% for r in above_avg %}
+                    <tr><td>{{ r.department_name }}</td><td>{{ r.cnt }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}<p class="text-muted">No departments above average yet.</p>{% endif %}
+        </div>
+
+        <!-- Students without mentorship requests (LEFT JOIN) -->
+        <div class="section-card">
+            <h2>Students Without Mentorship Requests
+                <small class="text-muted">(LEFT JOIN)</small>
+            </h2>
+            {% if no_request %}
+            <table class="data-table">
+                <thead><tr><th>Student Name</th><th>Email</th><th>Department</th></tr></thead>
+                <tbody>
+                    {% for s in no_request %}
+                    <tr><td>{{ s.full_name }}</td><td>{{ s.email }}</td><td>{{ s.department_name }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}<p class="text-muted">All students have sent mentorship requests.</p>{% endif %}
+        </div>
+
+        <!-- Event Registrations -->
+        <div class="section-card">
+            <h2>Event Registrations</h2>
+            {% if event_reg %}
+            <table class="data-table">
+                <thead><tr><th>Event</th><th>Registrations</th></tr></thead>
+                <tbody>
+                    {% for r in event_reg %}
+                    <tr><td>{{ r.event_name }}</td><td>{{ r.reg_count }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}<p class="text-muted">No event registrations.</p>{% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

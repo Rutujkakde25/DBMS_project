@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Alumni Networking System{% endblock %} | AlumniConnect</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .demo-bar {
+            background: #1e1b4b;
+            color: #e0e7ff;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            border-bottom: 2px solid #6366f1;
+        }
+        .demo-bar span { font-weight: 600; }
+        .demo-links { display: flex; gap: 8px; }
+        .demo-btn {
+            background: #4f46e5;
+            color: #ffffff !important;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background .2s;
+        }
+        .demo-btn:hover { background: #4338ca; }
+        .demo-btn.admin { background: #9333ea; }
+        .demo-btn.alumni { background: #059669; }
+        .demo-btn.student { background: #2563eb; }
+    </style>
+</head>
+<body>
+
+<!-- INSTANT 1-CLICK DEMO BAR (NO PASSWORDS NEEDED) -->
+<div class="demo-bar">
+    <div>⚡ <span>LIVE DEMO MODE:</span> Click any role to instantly open its dashboard without passwords:</div>
+    <div class="demo-links">
+        <a href="{{ url_for('auth.demo_login', role='admin') }}" class="demo-btn admin">👑 1-Click Admin</a>
+        <a href="{{ url_for('auth.demo_login', role='alumni') }}" class="demo-btn alumni">🎓 1-Click Alumni</a>
+        <a href="{{ url_for('auth.demo_login', role='student') }}" class="demo-btn student">👨‍🎓 1-Click Student</a>
+    </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="navbar-brand">
+        <a href="{{ url_for('index') }}">🎓 AlumniConnect</a>
+    </div>
+    <div class="navbar-links">
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('about') }}">About Project</a>
+        <a href="{{ url_for('directory') }}">Alumni Directory</a>
+        {% if session.get('user_id') %}
+            {% if session.get('role') == 'admin' %}
+                <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+            {% elif session.get('role') == 'alumni' %}
+                <a href="{{ url_for('alumni.dashboard') }}">Dashboard</a>
+            {% elif session.get('role') == 'student' %}
+                <a href="{{ url_for('student.dashboard') }}">Dashboard</a>
+            {% endif %}
+            <span class="nav-user">👤 {{ session.get('full_name', 'Guest') }}</span>
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-sm btn-outline">Exit Role</a>
+        {% else %}
+            <a href="{{ url_for('auth.login') }}" class="btn btn-sm">Login</a>
+            <a href="{{ url_for('auth.register') }}" class="btn btn-sm btn-outline">Register</a>
+        {% endif %}
+    </div>
+</nav>
+
+<!-- FLASH MESSAGES -->
+<div class="flash-container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    <span>{{ message }}</span>
+                    <button class="alert-close" onclick="this.parentElement.remove()">✕</button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+    {% block content %}{% endblock %}
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <p>&copy; 2026 AlumniConnect – University Alumni Networking System | DBMS College Project</p>
+</footer>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

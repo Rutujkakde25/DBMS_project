@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card auth-card-wide">
+        <div class="auth-header">
+            <h2>🎓 Create Demo Account</h2>
+            <p>Join the AlumniConnect network</p>
+        </div>
+        <form method="POST" action="{{ url_for('auth.register') }}" id="registerForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="full_name">Full Name *</label>
+                    <input type="text" id="full_name" name="full_name" placeholder="Your full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="role">I am a *</label>
+                    <select id="role" name="role" required onchange="toggleRoleFields()">
+                        <option value="student">Current Student</option>
+                        <option value="alumni">Alumni (Graduated)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="department_id">Department *</label>
+                    <select id="department_id" name="department_id" required>
+                        {% if departments %}
+                            {% for dept in departments %}
+                            <option value="{{ dept.department_id }}">{{ dept.department_name }}</option>
+                            {% endfor %}
+                        {% else %}
+                            <option value="1">Computer Science Engineering</option>
+                            <option value="2">Electronics & Communication Engineering</option>
+                            <option value="3">Mechanical Engineering</option>
+                            <option value="4">Civil Engineering</option>
+                            <option value="5">Information Technology & Data Science</option>
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Alumni-specific field -->
+            <div id="alumni-fields" style="display:none;">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="graduation_year">Graduation Year</label>
+                        <input type="number" id="graduation_year" name="graduation_year"
+                               min="1990" max="2030" value="2024">
+                    </div>
+                    <div class="form-group">
+                        <label for="current_company">Current Company</label>
+                        <input type="text" id="current_company" name="current_company" placeholder="e.g. Google / Microsoft">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student-specific field -->
+            <div id="student-fields">
+                <div class="form-group">
+                    <label for="current_year">Current Year</label>
+                    <select id="current_year" name="current_year">
+                        <option value="1">1st Year</option>
+                        <option value="2">2nd Year</option>
+                        <option value="3" selected>3rd Year</option>
+                        <option value="4">4th Year</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-full">Create & Login Automatically</button>
+        </form>
+        <div class="auth-footer">
+            <p>Already have an account? <a href="{{ url_for('auth.login') }}">Go to Demo Login</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleRoleFields() {
+    const role = document.getElementById('role').value;
+    document.getElementById('alumni-fields').style.display = role === 'alumni' ? 'block' : 'none';
+    document.getElementById('student-fields').style.display = role === 'student' ? 'block' : 'none';
+}
+</script>
+{% endblock %}

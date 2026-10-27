@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <h3 class="sidebar-title">Student Menu</h3>
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('student.dashboard') }}" class="active">📊 Dashboard</a></li>
+            <li><a href="{{ url_for('student.edit_profile') }}">👤 My Profile</a></li>
+            <li><a href="{{ url_for('student.search_alumni') }}">🔍 Search Alumni</a></li>
+            <li><a href="{{ url_for('student.browse_jobs') }}">💼 Browse Jobs</a></li>
+            <li><a href="{{ url_for('student.my_mentorship') }}">🤝 My Requests</a></li>
+            <li><a href="{{ url_for('student.browse_events') }}">📅 Events</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="logout-link">🚪 Logout</a></li>
+        </ul>
+    </aside>
+    <div class="dashboard-main">
+        <div class="dashboard-header">
+            <h1>Welcome, {{ session.get('full_name') }} 👋</h1>
+            <p class="text-muted">Explore opportunities and connect with alumni.</p>
+        </div>
+
+        <div class="stat-cards-grid">
+            <div class="stat-card-dash blue">
+                <div class="stat-icon">🎓</div>
+                <div class="stat-info">
+                    <div class="stat-number">{{ alumni_count }}</div>
+                    <div class="stat-label">Alumni Available</div>
+                </div>
+            </div>
+            <div class="stat-card-dash green">
+                <div class="stat-icon">💼</div>
+                <div class="stat-info">
+                    <div class="stat-number">{{ jobs_count }}</div>
+                    <div class="stat-label">Job Opportunities</div>
+                </div>
+            </div>
+            <div class="stat-card-dash orange">
+                <div class="stat-icon">🤝</div>
+                <div class="stat-info">
+                    <div class="stat-number">{{ my_requests }}</div>
+                    <div class="stat-label">My Requests</div>
+                </div>
+            </div>
+            <div class="stat-card-dash purple">
+                <div class="stat-icon">📅</div>
+                <div class="stat-info">
+                    <div class="stat-number">{{ events_count }}</div>
+                    <div class="stat-label">Upcoming Events</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="section-card">
+            <h2>Quick Actions</h2>
+            <div class="quick-actions">
+                <a href="{{ url_for('student.search_alumni') }}" class="quick-action-btn">🔍 Find a Mentor</a>
+                <a href="{{ url_for('student.browse_jobs') }}" class="quick-action-btn">💼 Browse Jobs</a>
+                <a href="{{ url_for('student.my_mentorship') }}" class="quick-action-btn">🤝 My Requests</a>
+                <a href="{{ url_for('student.browse_events') }}" class="quick-action-btn">📅 Register for Events</a>
+            </div>
+        </div>
+
+        <!-- Recent Jobs -->
+        <div class="section-card">
+            <h2>Latest Job Opportunities</h2>
+            {% if recent_jobs %}
+            <div class="jobs-grid">
+                {% for j in recent_jobs %}
+                <div class="job-card-mini">
+                    <span class="badge badge-info">{{ j.job_type }}</span>
+                    <h4>{{ j.job_title }}</h4>
+                    <p>🏢 {{ j.company_name }}</p>
+                    {% if j.location %}<p>📍 {{ j.location }}</p>{% endif %}
+                    {% if j.deadline %}<p>⏰ Deadline: {{ j.deadline }}</p>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <a href="{{ url_for('student.browse_jobs') }}" class="btn btn-sm btn-outline" style="margin-top:1rem;">View All Jobs →</a>
+            {% else %}
+            <p class="text-muted">No jobs available yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

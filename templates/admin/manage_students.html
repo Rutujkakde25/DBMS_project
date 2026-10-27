@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Manage Students{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <h3 class="sidebar-title">Admin Panel</h3>
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('admin.dashboard') }}">📊 Dashboard</a></li>
+            <li><a href="{{ url_for('admin.manage_alumni') }}">🎓 Manage Alumni</a></li>
+            <li><a href="{{ url_for('admin.manage_students') }}" class="active">👨‍🎓 Manage Students</a></li>
+            <li><a href="{{ url_for('admin.manage_departments') }}">🏛️ Departments</a></li>
+            <li><a href="{{ url_for('admin.manage_events') }}">📅 Events</a></li>
+            <li><a href="{{ url_for('admin.reports') }}">📈 Reports</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="logout-link">🚪 Logout</a></li>
+        </ul>
+    </aside>
+    <div class="dashboard-main">
+        <div class="dashboard-header">
+            <h1>👨‍🎓 Manage Students</h1>
+        </div>
+        {% if students %}
+        <div class="section-card">
+            <table class="data-table">
+                <thead>
+                    <tr><th>Name</th><th>Email</th><th>Department</th><th>Year</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    {% for s in students %}
+                    <tr>
+                        <td><strong>{{ s.full_name }}</strong></td>
+                        <td>{{ s.email }}</td>
+                        <td>{{ s.department_name }}</td>
+                        <td>Year {{ s.current_year }}</td>
+                        <td><span class="badge badge-success">{{ s.account_status | capitalize }}</span></td>
+                        <td>
+                            <form method="POST" action="{{ url_for('admin.delete_student', user_id=s.user_id) }}"
+                                  onsubmit="return confirm('Delete student {{ s.full_name }}?');">
+                                <button type="submit" class="btn btn-sm btn-danger">🗑 Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">👨‍🎓</div>
+            <h3>No students registered yet.</h3>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

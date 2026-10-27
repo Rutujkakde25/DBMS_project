@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Post a Job{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <h3 class="sidebar-title">Alumni Menu</h3>
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('alumni.dashboard') }}">📊 Dashboard</a></li>
+            <li><a href="{{ url_for('alumni.edit_profile') }}">👤 Edit Profile</a></li>
+            <li><a href="{{ url_for('alumni.my_jobs') }}">💼 My Jobs</a></li>
+            <li><a href="{{ url_for('alumni.add_job') }}" class="active">➕ Post a Job</a></li>
+            <li><a href="{{ url_for('alumni.mentorship_requests') }}">🤝 Mentorship Requests</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="logout-link">🚪 Logout</a></li>
+        </ul>
+    </aside>
+    <div class="dashboard-main">
+        <div class="dashboard-header">
+            <h1>➕ Post a Job / Internship</h1>
+        </div>
+        <div class="section-card">
+            <form method="POST" action="{{ url_for('alumni.add_job') }}">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Company Name *</label>
+                        <input type="text" name="company_name" required placeholder="e.g. Google">
+                    </div>
+                    <div class="form-group">
+                        <label>Job Title *</label>
+                        <input type="text" name="job_title" required placeholder="e.g. Software Engineer Intern">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Job Type *</label>
+                        <select name="job_type" required>
+                            <option value="">-- Select --</option>
+                            <option value="Internship">Internship</option>
+                            <option value="Full-time">Full-time</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" name="location" placeholder="e.g. Bengaluru / Remote">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Job Description *</label>
+                    <textarea name="job_description" rows="5" required placeholder="Describe the role, requirements, and benefits..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Application Link</label>
+                        <input type="url" name="application_link" placeholder="https://company.com/apply">
+                    </div>
+                    <div class="form-group">
+                        <label>Application Deadline</label>
+                        <input type="date" name="deadline">
+                    </div>
+                </div>
+                <button type="submit" class="btn">📤 Post Job</button>
+                <a href="{{ url_for('alumni.my_jobs') }}" class="btn btn-outline" style="margin-left:1rem;">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

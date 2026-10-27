@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}My Jobs{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <h3 class="sidebar-title">Alumni Menu</h3>
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('alumni.dashboard') }}">📊 Dashboard</a></li>
+            <li><a href="{{ url_for('alumni.edit_profile') }}">👤 Edit Profile</a></li>
+            <li><a href="{{ url_for('alumni.my_jobs') }}" class="active">💼 My Jobs</a></li>
+            <li><a href="{{ url_for('alumni.add_job') }}">➕ Post a Job</a></li>
+            <li><a href="{{ url_for('alumni.mentorship_requests') }}">🤝 Mentorship Requests</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="logout-link">🚪 Logout</a></li>
+        </ul>
+    </aside>
+    <div class="dashboard-main">
+        <div class="dashboard-header">
+            <h1>💼 My Job Postings</h1>
+            <a href="{{ url_for('alumni.add_job') }}" class="btn btn-sm">➕ Post New Job</a>
+        </div>
+
+        {% if jobs %}
+        <div class="section-card">
+            <table class="data-table">
+                <thead>
+                    <tr><th>Title</th><th>Company</th><th>Type</th><th>Location</th><th>Deadline</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    {% for j in jobs %}
+                    <tr>
+                        <td><strong>{{ j.job_title }}</strong></td>
+                        <td>{{ j.company_name }}</td>
+                        <td><span class="badge badge-info">{{ j.job_type }}</span></td>
+                        <td>{{ j.location or '—' }}</td>
+                        <td>{{ j.deadline or '—' }}</td>
+                        <td class="action-btns">
+                            <a href="{{ url_for('alumni.edit_job', job_id=j.job_id) }}" class="btn btn-sm btn-outline">✏️ Edit</a>
+                            <form method="POST" action="{{ url_for('alumni.delete_job', job_id=j.job_id) }}"
+                                  onsubmit="return confirm('Delete this job posting?');" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-danger">🗑 Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">💼</div>
+            <h3>No jobs posted yet.</h3>
+            <a href="{{ url_for('alumni.add_job') }}" class="btn">Post Your First Job</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
